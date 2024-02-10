@@ -1,0 +1,6 @@
+{
+  "description": "test",
+  "status": "test",
+  "priority": 5,
+  "assignee": {"login":  "vio.vi", "name":  "viochka"}
+}
