@@ -50,7 +50,7 @@ public class TasksController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteTask(@PathVariable int id) {
         taskService.deleteTask(id);
-         return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ExceptionHandler
@@ -68,9 +68,10 @@ public class TasksController {
                 HttpStatus.NOT_FOUND
         );
     }
-
     //TODO добавление User в контекст
     //TODO add database (1 priority)
     //TODO ручка фильтрации по рейтингу и статусу
+
+    //TODO дто в контроллере, в сервисе уже работать с моделью
 }
 
