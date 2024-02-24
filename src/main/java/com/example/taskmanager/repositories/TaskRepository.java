@@ -40,6 +40,7 @@ public class TaskRepository {
         } catch (DataAccessException e) {
             throw new TaskNotFoundException("Задание не найдено", e);
         }
+
     }
 
     public void deleteTask(int id) {
