@@ -1,7 +1,5 @@
 package com.example.taskmanager.models;
 
-import com.example.taskmanager.utils.Priority;
-import com.example.taskmanager.utils.Status;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,6 +17,4 @@ public class Task {
     private Status status;
     @NotNull
     private Priority priority;
-    @NotNull
-    private User assignee;
 }

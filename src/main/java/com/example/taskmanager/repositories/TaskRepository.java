@@ -1,60 +1,59 @@
 package com.example.taskmanager.repositories;
 
 import com.example.taskmanager.models.Task;
-import com.example.taskmanager.models.User;
-import com.example.taskmanager.utils.Priority;
-import com.example.taskmanager.utils.Status;
 import com.example.taskmanager.utils.exceptions.TaskNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Repository
 public class TaskRepository {
-    private final List<Task> tasks = new ArrayList<>();
+    private final JdbcTemplate jdbc;
 
-    public TaskRepository() {
-        setTasks();
+    public TaskRepository(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
     }
 
     public List<Task> getAllTasks() {
-        return tasks;
-    }
-
-    private void setTasks() {
-        var mock = new Task("123", Status.IN_PROGRESS, Priority.CRITICAL, new User("v.v", "vio"));
-        tasks.add(mock);
-        tasks.add(mock);
-        tasks.add(mock);
+        return jdbc.query("select * from task", new BeanPropertyRowMapper<>(Task.class));
     }
 
     public void saveTask(Task task) {
-        tasks.add(task);
+        jdbc.update("insert into task (description, status, priority) values(?, ?, ?)",
+                task.getDescription(),
+                task.getStatus().name(),
+                task.getPriority().name()
+        );
     }
 
     public void editTask(Task newTask, int id) {
         try {
-            tasks.set(id, newTask);
-        }
-        catch (IndexOutOfBoundsException e) {
+            jdbc.update("update task set description=?, status=?, priority=? where id=?",
+                    newTask.getDescription(),
+                    newTask.getStatus().name(),
+                    newTask.getPriority().name(),
+                    id
+            );
+        } catch (DataAccessException e) {
             throw new TaskNotFoundException("Задание не найдено", e);
         }
     }
 
     public void deleteTask(int id) {
         try {
-            tasks.remove(id);
-        }
-        catch (IndexOutOfBoundsException e) {
-            throw new TaskNotFoundException("Нет заданий для удаления по этому индексу", e);
+            jdbc.update("delete * from task where=?", id);
+        } catch (DataAccessException e) {
+            throw new TaskNotFoundException("Нет заданий для удаления по индексу " + id, e);
         }
     }
 
     public Task getTaskById(int id) {
-        return tasks.stream()
-                .skip(id)
-                .findFirst()
-                .orElseThrow(() -> new TaskNotFoundException("Задание не найдено", new IndexOutOfBoundsException()));
+        return jdbc.query("select * from task where id=?", new BeanPropertyRowMapper<>(Task.class), id)
+                .stream()
+                .findAny()
+                .orElseThrow(() -> new TaskNotFoundException("Задание c " + id + " не найдено"));
     }
 }
