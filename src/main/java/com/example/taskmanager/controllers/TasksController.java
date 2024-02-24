@@ -77,10 +77,5 @@ public class TasksController {
                 HttpStatus.NOT_FOUND
         );
     }
-    //TODO добавление User в контекст
-    //TODO add database (1 priority)
-    //TODO ручка фильтрации по рейтингу и статусу
-
-    //TODO дто в контроллере, в сервисе уже работать с моделью
 }
 
